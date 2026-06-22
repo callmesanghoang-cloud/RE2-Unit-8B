@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Travels of Ibn Battuta - Interactive Learning</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #fdf5e6; /* Màu Old Lace giống cát sa mạc */
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left-panel, .right-panel {
+            width: 50%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .left-panel {
+            background-color: #ffffff;
+            border-right: 2px solid #d2b48c;
+            line-height: 1.8;
+            font-size: 16.5px;
+            color: #3e2723;
+        }
+
+        .right-panel {
+            background-color: #fffaf0;
+        }
+
+        /* --- BỘ PHÁT AUDIO MÀU CÁT SA MẠC --- */
+        .title-container {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 3px solid #c19a6b;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        h1 {
+            color: #8b4513;
+            font-size: 30px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .custom-audio-player {
+            background: #f4e1d2; /* Màu cát ấm */
+            border: 1px solid #d2b48c;
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%; /* Chiếm phần lớn cột trái - tương đương nửa màn hình */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .audio-btn {
+            background-color: #c19a6b;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .audio-btn:hover {
+            background-color: #a67c52;
+            transform: translateY(-1px);
+        }
+
+        .audio-btn.stop {
+            background-color: #9e9e9e;
+        }
+        .audio-btn.stop:hover {
+            background-color: #757575;
+        }
+
+        .audio-timeline-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .time-display {
+            font-size: 13px;
+            color: #5d4037;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .audio-seekbar {
+            flex-grow: 1;
+            height: 8px;
+            cursor: pointer;
+            accent-color: #8b4513;
+        }
+
+        /* --- INTERACTIVE VOCABULARY & HIGHLIGHT --- */
+        .vocab {
+            color: #b71c1c;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 1px dashed #b71c1c;
+            padding: 0 2px;
+            transition: background 0.2s;
+        }
+        .vocab:hover {
+            background-color: #ffebee;
+            border-radius: 3px;
+        }
+
+        .evidence {
+            transition: background-color 0.4s ease;
+            border-radius: 4px;
+            padding: 1px 3px;
+        }
+
+        /* 🎨 MÀU HIGHLIGHT ĐỒNG BỘ RIÊNG BIỆT CHO TỪNG CÂU HỎI */
+        /* Phần A (Đồng bộ Màu giữa Câu hỏi & Bài đọc) */
+        .color-a1 { background-color: #ffecb3 !important; color: #000 !important; } /* Vàng hổ phách */
+        .color-a2 { background-color: #b3e5fc !important; color: #000 !important; } /* Xanh dương nhạt */
+        .color-a3 { background-color: #c8e6c9 !important; color: #000 !important; } /* Xanh lục nhạt */
+        .color-a4 { background-color: #e8f5e9 !important; color: #000 !important; } /* Xanh lá mạ */
+        .color-a5 { background-color: #ffe0b2 !important; color: #000 !important; } /* Cam nhạt */
+        
+        /* Phần B (Đồng bộ Màu giữa Câu hỏi & Bài đọc) */
+        .color-b1 { background-color: #fff59d !important; color: #000 !important; } /* Vàng chanh */
+        .color-b2 { background-color: #90caf9 !important; color: #000 !important; } /* Xanh dương */
+        .color-b3 { background-color: #a5d6a7 !important; color: #000 !important; } /* Xanh lá */
+        .color-b4 { background-color: #f48fb1 !important; color: #000 !important; } /* Hồng đào */
+
+        /* --- QUESTION BLOCKS --- */
+        .section-title {
+            font-weight: bold;
+            color: #5d4037;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 3px solid #d2b48c;
+            padding-bottom: 5px;
+        }
+
+        .question-block {
+            background: #fff;
+            padding: 18px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid #d2b48c;
+            transition: background-color 0.4s ease, border-left-color 0.4s ease;
+        }
+
+        /* Đồng bộ viền màu sắc các câu hỏi ban đầu */
+        #q1-block { border-left-color: #ffd54f; }
+        #q2-block { border-left-color: #4fc3f7; }
+        #q3-block { border-left-color: #81c784; }
+        #q4-block { border-left-color: #a5d6a7; }
+        #q5-block { border-left-color: #ffb74d; }
+
+        #qb1 { border-left-color: #fbc02d; }
+        #qb2 { border-left-color: #1976d2; }
+        #qb3 { border-left-color: #388e3c; }
+        #qb4 { border-left-color: #c2185b; }
+
+        .question-text { font-weight: 600; margin-bottom: 10px; line-height: 1.5; color: #3e2723; }
+
+        /* Input cho Phần B Short Answer */
+        .short-answer-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            margin-top: 5px;
+            outline-color: #c19a6b;
+            transition: all 0.3s;
+        }
+
+        .options { list-style: none; }
+        .options li { margin-bottom: 8px; }
+        .options label { cursor: pointer; display: flex; align-items: center; }
+        .options input { margin-right: 10px; }
+
+        .feedback { margin-top: 8px; font-size: 14px; }
+        .correct { color: #2e7d32; font-weight: bold; }
+        .incorrect { color: #c62828; font-weight: bold; }
+
+        /* --- BUTTONS & NAVIGATION --- */
+        .btn-container {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .action-btn {
+            background-color: #c19a6b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: 1;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        .action-btn:hover { background-color: #a67c52; }
+        .back-btn { background-color: #757575; }
+        .back-btn:hover { background-color: #616161; }
+
+        .hidden { display: none !important; }
+
+        /* Modal từ vựng */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 12% auto;
+            padding: 25px;
+            border-left: 8px solid #c19a6b;
+            width: 450px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .close-btn { position: absolute; top: 8px; right: 15px; font-size: 24px; cursor: pointer; color: #aaa; }
+        .modal-field { margin-bottom: 12px; font-size: 15px; }
+        .modal-label { font-weight: bold; color: #555; display: inline-block; min-width: 90px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- PANEL TRÁI: BÀI ĐỌC -->
+    <div class="left-panel">
+        <div class="title-container">
+            <h1>The Travels of Ibn Battuta</h1>
+            
+            <!-- BỘ PHÁT AUDIO MÀU CÁT SA MẠC -->
+            <div class="custom-audio-player">
+                <audio id="readingAudio" src="generated-audio-june-21-2026-10-42pm_nt8pYkYD.wav"></audio>
+                <div class="audio-controls">
+                    <button class="audio-btn" onclick="playAudio()">▶ Play</button>
+                    <button class="audio-btn" onclick="pauseAudio()">⏸ Pause</button>
+                    <button class="audio-btn stop" onclick="stopAudio()">⏹ Stop</button>
+                </div>
+                <div class="audio-timeline-wrapper">
+                    <span class="time-display" id="currentTime">0:00</span>
+                    <input type="range" class="audio-seekbar" id="audioSeekbar" value="0" min="0" max="100">
+                    <span class="time-display" id="durationTime">0:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <p><strong>A</strong> "I left Tangier, my birthplace, the 13th of June, 1325, with the <span class="vocab" data-id="1">intention</span> of making the pilgrimage [to Mecca] ... to leave all my friends both female and male, to <span class="vocab" data-id="2">abandon</span> my home as birds abandon their nests." <span id="ev-b1" class="evidence">So begins an old manuscript in a library in Paris—the travel journal of Ibn Battuta.</span></p>
+        
+        <p><strong>B</strong> Almost two centuries before Columbus, this young Moroccan set off for Mecca, returning home three decades later. <span id="ev-a1" class="evidence">Ibn Battuta is now <span class="vocab" data-id="3">regarded</span> as one of history's great travelers.</span> Driven by curiosity, he journeyed to remote corners of the Islamic world, traveling three times as far as Marco Polo, through 44 modern countries. <span id="ev-a5" class="evidence">He is little celebrated in some parts of the world, yet his name is well known among Arabs.</span> In his hometown of <span id="ev-b2" class="evidence">Tangier, a square, a hotel, a café</span>, a ferry boat, and even a hamburger are named after him.</p>
+        
+        <p><strong>C</strong> <span class="vocab" data-id="4">Prior</span> to his adventures traveling the world, Ibn Battuta <span id="ev-b3" class="evidence">studied in Mecca for several years</span>. However, the urge to travel soon took over. He traveled to India, seeking profitable employment with the Sultan of Delhi. On the way, he described his group being attacked in the open country by 80 foot soldiers and two horsemen: "we fought ... killing one of their horsemen and about twelve of the foot soldiers. ... I was hit by an arrow and my horse by another, but God in his grace preserved me."</p>
+        
+        <p><strong>D</strong> In Delhi, the sultan <span id="ev-a2" class="evidence">gave him the position of judge, based on his studies at Mecca</span>. But the sultan had an unpredictable character, and Ibn Battuta was soon looking for an opportunity to leave. When the sultan offered to <span class="vocab" data-id="5">finance</span> a trip to China, Ibn Battuta agreed. He set off in three ships, but <span class="vocab" data-id="6">misfortune</span> struck while he was still on shore. <span id="ev-b4" class="evidence">A sudden storm grounded and broke up two of the ships.</span> Scattering treasure, the storm drowned many people and horses. As he watched, the third ship, with all his <span class="vocab" data-id="7">belongings</span> and slaves, was carried out to sea and never heard from again.</p>
+        
+        <p><strong>E</strong> After a lifetime of adventures, Ibn Battuta was finally <span id="ev-a4" class="evidence">ordered by the Sultan of Morocco to return home</span> to share his <span class="vocab" data-id="8">wisdom</span> with the world. Fortunately, he <span class="vocab" data-id="9">consented</span> and wrote a book that has been <span class="vocab" data-id="10">translated</span> into numerous languages, allowing people everywhere to read about his incredible journeys.</p>
+    </div>
+
+    <!-- PANEL PHẢI: KHU VỰC CÂU HỎI -->
+    <div class="right-panel">
+        
+        <!-- MÀN HÌNH 1: PHẦN A (MCQ) -->
+        <div id="screen-A">
+            <div class="section-title">Màn hình 1/2: A. Choose the best answer</div>
+            
+            <div class="question-block" id="q1-block">
+                <div class="question-text">1. What is <span id="qk-a1" class="q-keyword">the best description of Ibn Battuta</span>?</div>
+                <ul class="options">
+                    <li><label><input type="radio" name="q1" value="a"> a. an amazing writer from Europe</label></li>
+                    <li><label><input type="radio" name="q1" value="b"> b. one of history's great adventurers</label></li>
+                    <li><label><input type="radio" name="q1" value="c"> c. the first man to sail around the world</label></li>
+                </ul>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="q2-block">
+                <div class="question-text">2. The Sultan of Delhi gave Ibn Battuta <span id="qk-a2" class="q-keyword">the position of judge because</span> _____.</div>
+                <ul class="options">
+                    <li><label><input type="radio" name="q2" value="a"> a. Ibn Battuta had studied in Mecca</label></li>
+                    <li><label><input type="radio" name="q2" value="b"> b. Ibn Battuta had been a judge before</label></li>
+                    <li><label><input type="radio" name="q2" value="c"> c. Ibn Battuta had traveled to many countries</label></li>
+                </ul>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="q3-block">
+                <div class="question-text">3. What does the word <span id="qk-a3" class="q-keyword">he refer to in paragraph E</span>?</div>
+                <ul class="options">
+                    <li><label><input type="radio" name="q3" value="a"> a. Ibn Battuta</label></li>
+                    <li><label><input type="radio" name="q3" value="b"> b. the Sultan of Morocco</label></li>
+                    <li><label><input type="radio" name="q3" value="c"> c. Ibn Battuta's slave</label></li>
+                </ul>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="q4-block">
+                <div class="question-text">4. Why did <span id="qk-a4" class="q-keyword">Ibn Battuta finally return home</span>?</div>
+                <ul class="options">
+                    <li><label><input type="radio" name="q4" value="a"> a. He was tired of traveling.</label></li>
+                    <li><label><input type="radio" name="q4" value="b"> b. He feared the Sultan of Delhi.</label></li>
+                    <li><label><input type="radio" name="q4" value="c"> c. The Sultan of Morocco told him to return.</label></li>
+                </ul>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="q5-block">
+                <div class="question-text">5. The writer of this passage most likely thinks that <span id="qk-a5" class="q-keyword">Ibn Battuta's journey</span> _____.</div>
+                <ul class="options">
+                    <li><label><input type="radio" name="q5" value="a"> a. was inspired by Marco Polo's travels</label></li>
+                    <li><label><input type="radio" name="q5" value="b"> b. was common for people of that time</label></li>
+                    <li><label><input type="radio" name="q5" value="c"> c. should be more well known today</label></li>
+                </ul>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="btn-container">
+                <button class="action-btn" onclick="submitPartA()">Nộp bài Phần A & Xem dẫn chứng</button>
+                <button class="action-btn next-btn hidden" id="to-part-B-btn" onclick="goToPartB()">Chuyển sang Phần B ➔</button>
+            </div>
+        </div>
+
+        <!-- MÀN HÌNH 2: PHẦN B (SHORT ANSWER) -->
+        <div id="screen-B" class="hidden">
+            <div class="section-title">Màn hình 2/2: B. Write short answers to the questions</div>
+            
+            <div class="question-block" id="qb1">
+                <div class="question-text"><span id="qk-b1">1. Where is Ibn Battuta's travel journal now?</span></div>
+                <input type="text" id="ans-b1" class="short-answer-input" placeholder="Nhập câu trả lời bằng tiếng Anh...">
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="qb2">
+                <div class="question-text"><span id="qk-b2">2. What three places in Tangier are named after Ibn Battuta?</span></div>
+                <input type="text" id="ans-b2" class="short-answer-input" placeholder="Nhập câu trả lời bằng tiếng Anh...">
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="qb3">
+                <div class="question-text"><span id="qk-b3">3. How long did Battuta study in Mecca?</span></div>
+                <input type="text" id="ans-b3" class="short-answer-input" placeholder="Nhập câu trả lời bằng tiếng Anh...">
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question-block" id="qb4">
+                <div class="question-text"><span id="qk-b4">4. What destroyed the ships Battuta was planning to take to China?</span></div>
+                <input type="text" id="ans-b4" class="short-answer-input" placeholder="Nhập câu trả lời bằng tiếng Anh...">
+                <div class="feedback"></div>
+            </div>
+
+            <div class="btn-container">
+                <button class="action-btn back-btn" onclick="goToPartA()">◀ Trở lại Phần A</button>
+                <button class="action-btn" onclick="submitPartB()">Nộp bài Phần B & Highlight</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL TỪ VỰNG -->
+<div id="vocabModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="v-word" style="color:#8b4513; margin-bottom: 15px; font-size: 24px;">Word</h2>
+        <div class="modal-field"><span class="modal-label">Loại từ:</span> <span id="v-type" style="font-style: italic; color: #8b4513;">(noun)</span></div>
+        <div class="modal-field"><span class="modal-label">Định nghĩa:</span> <span id="v-def">Definition</span></div>
+        <div class="modal-field"><span class="modal-label">Ý nghĩa:</span> <span id="v-meaning" style="font-weight: 500; color: #2e7d32;">Nghĩa</span></div>
+        <div class="modal-field" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ddd;">
+            <span class="modal-label" style="display:block; margin-bottom: 5px;">Ngữ cảnh:</span>
+            <span id="v-context" style="font-style: italic; color: #666; display: block; line-height: 1.4;">Sentence</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 🎧 ĐỒNG BỘ TIẾN TRÌNH AUDIO CÁT SA MẠC ---
+    const audio = document.getElementById("readingAudio");
+    const seekbar = document.getElementById("audioSeekbar");
+    const currentTimeDisplay = document.getElementById("currentTime");
+    const durationTimeDisplay = document.getElementById("durationTime");
+
+    function playAudio() { audio.play(); }
+    function pauseAudio() { audio.pause(); }
+    function stopAudio() {
+        audio.pause();
+        audio.currentTime = 0;
+        seekbar.value = 0;
+    }
+
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return mins + ":" + (secs < 10 ? "0" : "") + secs;
+    }
+
+    audio.addEventListener("loadedmetadata", () => {
+        durationTimeDisplay.innerText = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+        if (!isNaN(audio.duration)) {
+            const percentage = (audio.currentTime / audio.duration) * 100;
+            seekbar.value = percentage;
+            currentTimeDisplay.innerText = formatTime(audio.currentTime);
+        }
+    });
+
+    seekbar.addEventListener("input", () => {
+        if (!isNaN(audio.duration)) {
+            const newTime = (seekbar.value / 100) * audio.duration;
+            audio.currentTime = newTime;
+        }
+    });
+
+    // --- 📋 TỪ VỰNG TƯƠNG TÁC ---
+    const vocabData = {
+        "1": { word: "intention", type: "noun", def: "An aim or plan.", meaning: "ý định, mục đích", context: "I left Tangier with the intention of making the pilgrimage." },
+        "2": { word: "abandon", type: "verb", def: "To leave a place or person forever.", meaning: "từ bỏ, từ giã", context: "To abandon my home as birds abandon their nests." },
+        "3": { word: "regarded", type: "verb", def: "Considered or thought of in a specified way.", meaning: "được xem là, coi là", context: "Ibn Battuta is now regarded as one of history's great travelers." },
+        "4": { word: "prior", type: "adjective", def: "Existing or coming before in time, order, or importance.", meaning: "trước khi, trước đó", context: "Prior to his adventures, Ibn Battuta studied in Mecca." },
+        "5": { word: "finance", type: "verb", def: "Provide funding for a person or enterprise.", meaning: "tài trợ, cấp vốn", context: "When the sultan offered to finance a trip to China, he agreed." },
+        "6": { word: "misfortune", type: "noun", def: "Bad luck; an unfortunate event.", meaning: "sự không may, vận rủi", context: "But misfortune struck while he was still on shore." },
+        "7": { word: "belongings", type: "noun (plural)", def: "A person's movable possessions.", meaning: "đồ dùng cá nhân, tài sản", context: "The third ship, with all his belongings and slaves, was carried out to sea." },
+        "8": { word: "wisdom", type: "noun", def: "The quality of having experience, knowledge, and good judgment.", meaning: "sự khôn ngoan, trí tuệ", context: "Morocco ordered him to return home to share his wisdom with the world." },
+        "9": { word: "consented", type: "verb", def: "Give permission for something to happen; agree to do something.", meaning: "đồng ý, bằng lòng", context: "Fortunately, he consented and wrote a book." },
+        "10": { word: "translated", type: "verb", def: "Express the sense of (words or text) in another language.", meaning: "được dịch", context: "His book has been translated into numerous languages." }
+    };
+
+    document.querySelectorAll('.vocab').forEach(item => {
+        item.addEventListener('click', function() {
+            const data = vocabData[this.getAttribute('data-id')];
+            if (data) {
+                document.getElementById('v-word').innerText = data.word;
+                document.getElementById('v-type').innerText = `(${data.type})`;
+                document.getElementById('v-def').innerText = data.def;
+                document.getElementById('v-meaning').innerText = data.meaning;
+                document.getElementById('v-context').innerText = data.context;
+                document.getElementById('vocabModal').style.display = 'block';
+            }
+        });
+    });
+    function closeModal() { document.getElementById('vocabModal').style.display = 'none'; }
+    window.onclick = function(e) { if (e.target == document.getElementById('vocabModal')) closeModal(); }
+
+    // --- 🖨️ CHẤM ĐIỂM & ĐỒNG BỘ HIGHLIGHT MÀU THEO TỪNG CÂU ---
+    const answersA = { q1: 'b', q2: 'a', q3: 'a', q4: 'c', q5: 'c' };
+    const evidenceA = { q1: ['ev-a1'], q2: ['ev-a2'], q3: ['ev-a3'], q4: ['ev-a4'], q5: ['ev-a5'] };
+
+    const answersB = {
+        b1: ["paris", "library in paris"],
+        b2: ["square, a hotel, a café", "square, hotel, cafe", "square, hotel, cafe"],
+        b3: ["several years", "several year"],
+        b4: ["sudden storm", "a sudden storm", "storm"]
+    };
+    const evidenceB = { b1: 'ev-b1', b2: 'ev-b2', b3: 'ev-b3', b4: 'ev-b4' };
+
+    function clearAllHighlights() {
+        document.querySelectorAll('.evidence, .q-keyword, .question-block').forEach(el => {
+            el.className = el.className.replace(/color-\w\d/g, '').trim();
+        });
+    }
+
+    // NỘP BÀI PHẦN A (Đồng bộ highlight màu sắc toàn diện cho Khối câu hỏi và Dẫn chứng)
+    function submitPartA() {
+        clearAllHighlights();
+        let index = 1;
+        Object.keys(answersA).forEach(qKey => {
+            const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+            const feedbackDiv = document.querySelector(`#${qKey}-block .feedback`);
+            const keywordSpan = document.getElementById(`qk-${qKey}`);
+            const questionBlock = document.getElementById(`${qKey}-block`);
+            const colorClass = `color-a${index}`;
+
+            // Tô màu đồng bộ cho block câu hỏi và từ khóa của câu hỏi
+            if(questionBlock) questionBlock.classList.add(colorClass);
+            if(keywordSpan) keywordSpan.classList.add(colorClass);
+
+            if (selected) {
+                if (selected.value === answersA[qKey]) {
+                    feedbackDiv.innerHTML = `<span class="correct">✓ Đúng rồi!</span>`;
+                } else {
+                    feedbackDiv.innerHTML = `<span class="incorrect">✗ Sai. (Đáp án đúng: ${answersA[qKey].toUpperCase()})</span>`;
+                }
+            } else {
+                feedbackDiv.innerHTML = `<span class="incorrect">⚠️ Chưa chọn đáp án.</span>`;
+            }
+
+            if (evidenceA[qKey]) {
+                evidenceA[qKey].forEach(evId => {
+                    const el = document.getElementById(evId);
+                    if (el) el.classList.add(colorClass);
+                });
+            }
+            index++;
+        });
+        document.getElementById('to-part-B-btn').classList.remove('hidden');
+        document.querySelector('.left-panel').scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // CHUYỂN MÀN HÌNH QUA LẠI
+    function goToPartB() {
+        clearAllHighlights();
+        document.getElementById('screen-A').classList.add('hidden');
+        document.getElementById('screen-B').classList.remove('hidden');
+        document.querySelector('.left-panel').scrollTo({ top: 0 });
+    }
+
+    function goToPartA() {
+        clearAllHighlights();
+        document.getElementById('screen-B').classList.add('hidden');
+        document.getElementById('screen-A').classList.remove('hidden');
+        document.querySelector('.left-panel').scrollTo({ top: 0 });
+    }
+
+    // NỘP BÀI PHẦN B (Đồng bộ màu sắc chính xác giữa câu hỏi và đoạn văn)
+    function submitPartB() {
+        clearAllHighlights();
+        
+        Object.keys(answersB).forEach(qKey => {
+            const inputVal = document.getElementById(`ans-${qKey}`).value.trim().toLowerCase();
+            const feedbackDiv = document.querySelector(`#q${qKey} .feedback`);
+            const questionText = document.getElementById(`qk-${qKey}`);
+            const questionBlock = document.getElementById(`q${qKey}`);
+            const evidenceId = evidenceB[qKey];
+            const colorClass = `color-${qKey}`;
+
+            // Kiểm tra đáp án chính xác theo từ khóa
+            let isCorrect = false;
+            answersB[qKey].forEach(possibleAns => {
+                if (inputVal.includes(possibleAns)) {
+                    isCorrect = true;
+                }
+            });
+
+            if (inputVal === "") {
+                feedbackDiv.innerHTML = `<span class="incorrect">⚠️ Chưa nhập câu trả lời.</span>`;
+            } else if (isCorrect) {
+                feedbackDiv.innerHTML = `<span class="correct">✓ Chính xác!</span>`;
+            } else {
+                feedbackDiv.innerHTML = `<span class="incorrect">✗ Chưa đúng. (Gợi ý: xem lại dẫn chứng màu tương ứng)</span>`;
+            }
+
+            // Đồng bộ màu highlight cho: 1. Khung câu hỏi, 2. Text câu hỏi, 3. Dẫn chứng trong bài đọc
+            if (questionBlock) questionBlock.classList.add(colorClass);
+            if (questionText) questionText.classList.add(colorClass);
+            
+            const evEl = document.getElementById(evidenceId);
+            if (evEl) {
+                evEl.classList.add(colorClass);
+            }
+        });
+
+        document.querySelector('.left-panel').scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
