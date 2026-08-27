@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Tập Dịch Task 1 (Việt - Anh) - Education Budget</title>
+    <style>
+        :root {
+            /* Tông màu mới: Academic Teal & Soft Slate (Giáo dục & Tri thức) */
+            --primary-color: #0d9488;        /* Teal/Xanh ngọc bích đậm chủ đạo */
+            --bg-color: #f0fdfa;             /* Nền mint/xám xanh dịu mát */
+            --card-bg: #ffffff;              /* Nền bài viết trắng sáng */
+            --text-color: #134e4a;           /* Chữ xanh ngọc đậm sắc nét */
+            
+            /* Highlight tiếng Việt phong cách Academic Teal */
+            --highlight-bg: #ccfbf1;         /* Nền highlight xanh mint nhạt */
+            --highlight-text: #0f766e;       /* Chữ highlight ngọc bích đậm */
+            --highlight-border: #99f6e4;     /* Viền mint pastel */
+
+            --success-color: #16a34a;        /* Xanh lá báo đúng */
+            --error-color: #dc2626;          /* Đỏ báo sai */
+            --border-color: #99f6e4;         /* Viền ô input ngọc nhạt */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background-color: #e6fffa;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 16px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #0f766e;
+        }
+
+        .version-title {
+            color: var(--primary-color);
+            border-bottom: 2px solid #5eead4;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .essay-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.06);
+            border: 1px solid #ccfbf1;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        /* Highlight dịu mắt */
+        .vn-highlight {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-text);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 2px 4px;
+            border: 1px solid var(--highlight-border);
+        }
+
+        .input-inline {
+            display: inline-block;
+            margin: 0 4px 0 2px;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        input[type="text"] {
+            padding: 4px 10px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #ffffff;
+            color: var(--text-color);
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
+        }
+
+        input[type="text"].correct {
+            border-color: var(--success-color);
+            background-color: #f0fdf4;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        input[type="text"].incorrect {
+            border-color: var(--error-color);
+            background-color: #fef2f2;
+            color: var(--error-color);
+        }
+
+        .tooltip-answer {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #042f2e;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            margin-bottom: 5px;
+        }
+
+        .input-inline:hover .tooltip-answer.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Luyện Tập Dịch IELTS Writing Task 1</h1>
+    <div class="instructions">
+        💡 <strong>Hướng dẫn sử dụng:</strong><br>
+        1. Đọc bài mô tả biểu đồ bên dưới. Mỗi cụm từ tiếng Việt được <span class="vn-highlight">highlight xanh mint tươi</span> sẽ có ô trống ngay phía sau.<br>
+        2. Nhập cụm từ tiếng Anh tương ứng vào ô trống rồi bấm phím <strong>Enter</strong>.<br>
+        3. Nếu đúng, ô sẽ báo màu xanh lá. Nếu sai, ô sẽ báo màu đỏ — rê chuột vào ô sai để xem đáp án gợi ý.
+    </div>
+
+    <h2 class="version-title">National Budgets Allocated to Education (1995–2010)</h2>
+    <div class="essay-card">
+        <p>
+            The bar chart compares 
+            <span class="vn-highlight">(tỷ lệ ngân sách quốc gia được phân bổ cho giáo dục)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="the percentage of national budgets allocated to education" size="52" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            in Canada, Australia, Japan, and Germany 
+            <span class="vn-highlight">(theo các khoảng thời gian 5 năm từ 1995 đến 2010)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="at five-year intervals from 1995 to 2010" size="42" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>.
+        </p>
+
+        <p>
+            What is 
+            <span class="vn-highlight">(đặc điểm đáng chú ý nhất của số liệu)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="the most noticeable feature of the data" size="38" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            is that spending on education 
+            <span class="vn-highlight">(có những xu hướng khác nhau ở bốn quốc gia)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="followed different patterns across the four countries" size="50" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            with Canada experiencing 
+            <span class="vn-highlight">(mức giảm đáng kể nhất)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="the most substantial decline" size="28" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>. 
+            Despite this 
+            <span class="vn-highlight">(mặc dù vậy)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="Despite this" size="14" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            it 
+            <span class="vn-highlight">(vẫn là quốc gia phân bổ tỷ lệ ngân sách lớn nhất cho giáo dục)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="remained the country allocating the largest proportion of its budget to education" size="68" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            <span class="vn-highlight">(vào cuối giai đoạn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="at the end of the period" size="22" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>.
+        </p>
+
+        <p>
+            Throughout the period 
+            <span class="vn-highlight">(trong suốt giai đoạn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="Throughout the period" size="22" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            Canada and Australia 
+            <span class="vn-highlight">(phân bổ tỷ trọng ngân sách lớn hơn đáng kể)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="allocated considerably larger shares of their budgets" size="50" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            to education than did Japan and Germany. Notably, Canada 
+            <span class="vn-highlight">(ghi nhận con số cao nhất trên biểu đồ)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="recorded the highest figure on the chart" size="38" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            <span class="vn-highlight">(vào đầu giai đoạn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="at the beginning" size="18" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            at approximately 24%. Thereafter, 
+            <span class="vn-highlight">(sau đó, tuy nhiên)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="however" size="12" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            this proportion 
+            <span class="vn-highlight">(giảm đều xuống khoảng 18%)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="fell steadily to around 18%" size="30" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            by 2005, before 
+            <span class="vn-highlight">(tiếp tục giảm xuống khoảng 16%)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="declining further to approximately 16%" size="40" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            in 2010. A broadly similar pattern 
+            <span class="vn-highlight">(cũng được thể hiện ở Australia)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="was evident in Australia" size="26" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            where government spending on education 
+            <span class="vn-highlight">(giảm từ khoảng 21% xuống 17%)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="decreased from roughly 21% to 17%" size="36" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            between 1995 and 2005. Although the figure 
+            <span class="vn-highlight">(phục hồi nhẹ vào cuối giai đoạn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="recovered slightly towards the end of the period" size="46" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            this improvement 
+            <span class="vn-highlight">(khá khiêm tốn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="was relatively modest" size="22" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>.
+        </p>
+
+        <p>
+            <span class="vn-highlight">(chuyển sang Nhật Bản)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="Turning to Japan" size="18" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            it was the only country in the survey 
+            <span class="vn-highlight">(trải qua sự gia tăng liên tục trong tỷ trọng chi tiêu)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="to experience a continuous increase in the share of expenditure" size="60" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            on education 
+            <span class="vn-highlight">(trong phần đầu của giai đoạn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="during the first part of the period" size="36" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            rising from approximately 10% to 13%. 
+            <span class="vn-highlight">(tuy nhiên)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="Nevertheless" size="14" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            its allocation 
+            <span class="vn-highlight">(sau đó giảm đáng kể)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="subsequently dropped considerably" size="36" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            to around 8% by 2005, representing 
+            <span class="vn-highlight">(một trong những thay đổi đáng kể nhất trong số liệu)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="one of the most significant changes in the data" size="48" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>. 
+            Similar to Australia, Japan 
+            <span class="vn-highlight">(ghi nhận sự phục hồi nhẹ vào cuối giai đoạn)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="recorded a slight recovery towards the end" size="42" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            although this increase 
+            <span class="vn-highlight">(không đủ để bù đắp mức giảm trước đó)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="was insufficient to offset the earlier decline" size="46" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>.
+        </p>
+
+        <p>
+            <span class="vn-highlight">(cuối cùng)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="Finally" size="10" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span>, 
+            Germany 
+            <span class="vn-highlight">(thể hiện tương đối ít biến động)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="displayed relatively little variation" size="36" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            throughout the period. The proportion of its national budget 
+            <span class="vn-highlight">(được phân bổ cho giáo dục vẫn tương đối ổn định)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="allocated to education remained relatively stable" size="48" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            at around 8–10%, with 
+            <span class="vn-highlight">(mức đỉnh nhẹ khoảng 11%)</span>
+            <span class="input-inline">
+                <input type="text" data-ans="a marginal peak of approximately 11%" size="38" onkeydown="checkInlineAnswer(event, this)">
+                <span class="tooltip-answer"></span>
+            </span> 
+            in 2005.
+        </p>
+    </div>
+</div>
+
+<script>
+    function cleanText(str) {
+        return str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function checkInlineAnswer(event, inputElement) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const userAnswer = cleanText(inputElement.value);
+            const correctAnswer = cleanText(inputElement.getAttribute('data-ans'));
+            const originalAns = inputElement.getAttribute('data-ans');
+            const tooltip = inputElement.nextElementSibling;
+
+            if (userAnswer === "") {
+                inputElement.className = "";
+                tooltip.classList.remove('show');
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                inputElement.className = "correct";
+                tooltip.classList.remove('show');
+            } else {
+                inputElement.className = "incorrect";
+                tooltip.textContent = `Đáp án: "${originalAns}"`;
+                tooltip.classList.add('show');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
